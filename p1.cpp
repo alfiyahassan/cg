@@ -1,91 +1,66 @@
-#include<GL/glut.h>
 #include<stdio.h>
-intx1,y1,x2,y2;
-voidmyInit()
+#include<math.h>
+#include<gl/glut.h>
+GLint X1,Y1,X2,Y2;
+void LineBres(void)
 {
 glClear(GL_COLOR_BUFFER_BIT);
-glClearColor(0.0,0.0,0.0,1.0);
-glMatrixMode(GL_PROJECTION);
-gluOrtho2D(0,500,0,500);
-}
-voiddraw_pixel(intx,inty)
+int dx=abs(X2-X1),dy=abs(Y2-Y1);
+int p=2*dy-dx;
+int twoDy=2*dy, twoDyDx=2*(dy-dx);
+int x,y;
+if(X1>X2)
 {
+x=X2;
+y=Y2;
+X2=X1;
+}
+else
+{
+x=X1;
+y=Y1;
+X2=X2;
+}
 glBegin(GL_POINTS);
 glVertex2i(x,y);
+while(x<X2)
+{
+x++;
+if(p<0)
+p+=twoDy;
+else
+{
+y++;
+p+=twoDyDx;
+}
+glVertex2i(x,y);
+}
 glEnd();
-}
-voiddraw_line(intx1,intx2,int y1,inty2)
-{
-intdx,dy,i,e,x,y,incx,incy,inc1,inc2;
-dx=x2-x1;
-dy=y2-y1;
-if(dx<0)
-dx=-dx;
-if(dy<0)
-dy=-dy;
-incx=1;
-if(x2<x1)
-incx=-1;
-incy=1;
-if(y2<y1)
-incy=-1;
-x=x1;y=y1;
-if(dx>dy)
-{
-draw_pixel(x,y);
-e=2*dy-dx;
-inc1=2*(dy-dx);
-inc2=2*dy;
-for(i=0;i<dx;i++)
-{
-if(e>=0)
-{
-y+=incy;
-e+=inc1;
-}
-else
-e+=inc2;
-x+=incx;
-draw_pixel(x,y);
-}
-}
-else
-{
-draw_pixel(x,y);
-e=2*dx-dy;
-inc1=2*(dx-dy);
-inc2=2*dx;
-for(i=0;i<dy;i++)
-{
-if(e>=0)
-{
-x+=incx;
-e+=inc1;
-}
-else
-e+=inc2;
-y+=incy;
-draw_pixel(x,y);
-}
-}
-}
-voidmyDisplay()
-{
-draw_line(x1,x2,y1,y2);
 glFlush();
 }
-intmain(intargc,char **argv)
+void Init()
 {
-printf("Enter(x1,y1,x2,y2)\n");
-scanf("%d%d%d%d"
-,&x1,&y1,&x2,&y2);
+glClearColor(1.0,1.0,1.0,0);
+glColor3f(0.0,0.0,0.0);
+glPointSize(4.0);
+glViewport(0,0,50,50);
+glMatrixMode(GL_PROJECTION);
+glLoadIdentity();
+gluOrtho2D(0,50,0,50);
+}
+void main(int argc,char **argv)
+{
+
+printf("enter two points for draw lineBresenham:\n"); printf("\n enter point1(X1,Y1):");
+scanf_s("%d%d",&X1,&Y1);
+printf("\n enter point2(X2,Y2):");
+scanf_s("%d%d",&X2,&Y2);
 glutInit(&argc,argv);
-glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB);
-glutInitWindowSize(500,500);
+glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+glutInitWindowSize(300,400);
 glutInitWindowPosition(0,0);
-glutCreateWindow("Bresenham'sLineDrawing");
-myInit();
-glutDisplayFunc(myDisplay);
+glutCreateWindow("LineBresenham");
+Init();
+glutDisplayFunc(LineBres);
 glutMainLoop();
-return0;
 }
